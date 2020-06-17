@@ -1,4 +1,4 @@
-export function render(width: number, height: number,  otuput: string, colors: number[][], depthMap: number[][] | null, depthMapper?: DepthMapper | null): void
+export function render(width: number, height: number, depthMap: number[][] | null, depthMapper: DepthMapper | null, otuput: string, colors: number[][]): void
 
 export class DepthMapper {
     autoResize: boolean
