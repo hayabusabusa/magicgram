@@ -220,7 +220,7 @@ class CanvasTextWrapper {
     }
 
     outputTextPNGImage() {
-        const writeStream = fs.createWriteStream(__dirname + this.output + ".png");
+        const writeStream = fs.createWriteStream(this.output + "text.png");
         const pngStream = this.canvas.pngStream();
         
         pngStream.on("data", function(chunk) {

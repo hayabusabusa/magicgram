@@ -131,7 +131,7 @@ function renderToPNGImage(output, pixelData, width, height) {
     imageData.data.set(pixelData);
     context.putImageData(imageData, 0, 0);
 
-    const writeStream = fs.createWriteStream(__dirname + output + ".png");
+    const writeStream = fs.createWriteStream(output + "image.png");
     const pngStream = canvas.pngStream();
 
     pngStream.on("data", function(chunk) {
