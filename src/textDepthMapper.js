@@ -1,12 +1,14 @@
 'use strict'
 
 const Canvas = require('canvas');
+const fs = require('fs');
 const DepthMapper = require('./depthMapper');
 
 class TextDepthMapper extends DepthMapper {
     constructor(
-        text, 
-        font = "bold 48px Helvetica, Arial, sans-serif", 
+        text,
+        output = null,
+        font = "bold 56px Helvetica, Arial, sans-serif", 
         paddingX = null, 
         paddingY = null, 
         sizeToFill = true, 
@@ -14,6 +16,7 @@ class TextDepthMapper extends DepthMapper {
         ) {
         super();
         this.text = text;
+        this.output = output;
         this.font = font;
         this.paddingX = paddingX;
         this.paddingY = paddingY;
@@ -32,7 +35,7 @@ class TextDepthMapper extends DepthMapper {
         const paddingX = this.paddingX || Math.round(width * 0.1);
         const paddingY = this.paddingY || Math.round(height * 0.1);
 
-        const canvasTextWrapper = new CanvasTextWrapper(canvas, this.text, this.font, 'center', 'middle', paddingX, paddingY);
+        const canvasTextWrapper = new CanvasTextWrapper(canvas, this.text, this.output, this.font, paddingX, paddingY);
         canvasTextWrapper.drawText();
 
         var x, y, offset,
@@ -58,23 +61,23 @@ class TextDepthMapper extends DepthMapper {
 *  Copyright (c) 2014 Vadim Namniak
 */
 
-//global.CanvasTextWrapper = CanvasTextWrapper;
-
 class CanvasTextWrapper {
     constructor(
         canvas, 
-        text, 
+        text,
+        output = null,
         font = '18px Arial, sans-serif',
-        textAlign = 'left',     // each line of text is aligned left
-        verticalAlign = 'top',  // text lines block is aligned top
         paddingX = 0,           // zero px left & right text padding relative to canvas or parent
         paddingY = 0,           // zero px top & bottom text padding relative to canvas or parent
+        textAlign = 'center',     // each line of text is aligned left
+        verticalAlign = 'middle',  // text lines block is aligned top
         fitParent = false,      // text is tested to fit canvas width
         lineBreak = 'auto',     // text fills the element's (canvas or parent) width going to a new line on a whole word
         sizeToFill = false      // text is resized to fill the container height (given font size is ignored)
         ) {
         this.canvas = canvas;
         this.text = text;
+        this.output = output
         this.font = font;
         this.textAlign = textAlign;
         this.verticalAlign = verticalAlign;
@@ -131,9 +134,14 @@ class CanvasTextWrapper {
             textPos.y = parseInt(textPos.y) + parseInt(this.lineHeight);
             this.context.fillText(lines[i], textPos.x, textPos.y);
         }
+
+        // output text image if needed
+        if(this.output) {
+            this.outputTextPNGImage();
+        }
     }
 
-    setFontSize() {
+    setFontSize(size) {
         const fontParts = this.context.font.split(/\b\d+px\b/i);
         this.context.font = fontParts[0] + size + 'px' + fontParts[1];
         this.lineHeight = size;
@@ -209,6 +217,19 @@ class CanvasTextWrapper {
         } else {
             textPos.y = this.paddingY;
         }
+    }
+
+    outputTextPNGImage() {
+        const writeStream = fs.createWriteStream(__dirname + this.output + ".png");
+        const pngStream = this.canvas.pngStream();
+        
+        pngStream.on("data", function(chunk) {
+            writeStream.write(chunk);
+        });
+    
+        pngStream.on("end", function() {
+            console.log("save png to", writeStream.path);
+        });
     }
 
     validate() {
