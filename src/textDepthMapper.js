@@ -14,7 +14,7 @@ class TextDepthMapper extends DepthMapper {
         sizeToFill = true, 
         verticalAlign = 'middle'
         ) {
-        super();
+        super(true);
         this.text = text;
         this.output = output;
         this.font = font;

@@ -1,7 +1,9 @@
 'use strict'
 
 class DepthMapper {
-    autoResize = true;
+    constructor(autoResize = true) {
+        this.autoResize = autoResize;
+    }
 
     make(width, height) {
         // !!! Overwrite this method
