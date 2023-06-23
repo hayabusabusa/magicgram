@@ -10,7 +10,7 @@
   "author": "",
   "types": "types/index.d.ts",
   "dependencies": {
-    "canvas": "^2.6.1"
+    "canvas": "^2.11.2"
   },
   "license": "ISC"
 }
